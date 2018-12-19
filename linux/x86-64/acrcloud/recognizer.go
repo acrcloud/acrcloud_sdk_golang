@@ -106,7 +106,7 @@ func (self *Recognizer) CreateHummingFingerprintByBuffer(pcmData []byte) ([]byte
     }
 
     var fp *C.char
-    fpLenC := C.create_humming_fingerprint_by_filebuffer((*C.char)(unsafe.Pointer(&pcmData[0])), C.int(len(pcmData)), 0, 12, &fp)
+    fpLenC := C.create_humming_fingerprint_by_filebuffer((*C.char)(unsafe.Pointer(&pcmData[0])), C.int(len(pcmData)), 0, 15, &fp)
     fpLen := int(fpLenC)
     if fpLen <= 0 {
         return nil, fmt.Errorf("Can not Create Humming Fingerprint")
