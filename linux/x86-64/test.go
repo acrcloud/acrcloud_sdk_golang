@@ -27,7 +27,7 @@ func main() {
     fmt.Println(time.Now())
     var recHandler = acrcloud.NewRecognizer(configs)
 
-    result, _ := recHandler.Recognize(b)
+    result, _ := recHandler.RecognizeByFileBuffer(b, 0, 20)
     end := time.Now().UnixNano() / 1e6
     fmt.Println(end - start)
     fmt.Println(time.Now())

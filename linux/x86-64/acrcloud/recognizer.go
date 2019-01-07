@@ -2,7 +2,7 @@ package acrcloud
 
 /*
 #cgo CFLAGS: -I.
-#cgo LDFLAGS: -L. -lacrcloud_extr_tool -lstdc++
+#cgo LDFLAGS: -L. -lacrcloud_extr_tool -lpthread
 #include <stdio.h>
 #include <stdlib.h>
 #include "dll_acr_extr_tool.h"
@@ -100,13 +100,13 @@ func (self *Recognizer) GetSign(str string, key string) string {
     return base64.StdEncoding.EncodeToString(hmacHandler.Sum(nil))
 }
 
-func (self *Recognizer) CreateHummingFingerprintByBuffer(pcmData []byte) ([]byte, error) {
+func (self *Recognizer) CreateHummingFingerprintByBuffer(pcmData []byte, startSeconds int, lenSeconds int) ([]byte, error) {
     if (pcmData == nil || len(pcmData) == 0) {
         return nil, fmt.Errorf("Parameter pcmData is nil or len(pcmData) == 0")
     }
 
     var fp *C.char
-    fpLenC := C.create_humming_fingerprint_by_filebuffer((*C.char)(unsafe.Pointer(&pcmData[0])), C.int(len(pcmData)), 0, 15, &fp)
+    fpLenC := C.create_humming_fingerprint_by_filebuffer((*C.char)(unsafe.Pointer(&pcmData[0])), C.int(len(pcmData)), C.int(startSeconds), C.int(lenSeconds), &fp)
     fpLen := int(fpLenC)
     if fpLen <= 0 {
         return nil, fmt.Errorf("Can not Create Humming Fingerprint")
@@ -118,7 +118,7 @@ func (self *Recognizer) CreateHummingFingerprintByBuffer(pcmData []byte) ([]byte
     return fpBytes, nil
 }
 
-func (self *Recognizer) Recognize(data []byte) (string, error) {
+func (self *Recognizer) RecognizeByFileBuffer(data []byte, startSeconds int, lenSeconds int) (string, error) {
     qurl := "http://" + self.Host + "/v1/identify"
     http_method := "POST"
     http_uri := "/v1/identify"
@@ -129,7 +129,7 @@ func (self *Recognizer) Recognize(data []byte) (string, error) {
     string_to_sign := http_method+"\n"+http_uri+"\n"+self.AccessKey+"\n"+data_type+"\n"+signature_version+"\n"+ timestamp
     sign := self.GetSign(string_to_sign, self.AccessSecret)
 
-    humFp,err := self.CreateHummingFingerprintByBuffer(data)
+    humFp,err := self.CreateHummingFingerprintByBuffer(data, startSeconds, lenSeconds)
     if err != nil {
         return "", err
     }
