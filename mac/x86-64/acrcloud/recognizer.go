@@ -52,6 +52,7 @@ func (self *Recognizer) Post(url string, fieldParams map[string]string, filePara
     mpWriter := multipart.NewWriter(&postDataBuffer)
 
     for key, val := range fieldParams {
+        //fmt.Println(val)
         _ = mpWriter.WriteField(key, val)
     }
 
@@ -118,7 +119,7 @@ func (self *Recognizer) CreateHummingFingerprintByBuffer(pcmData []byte, startSe
     return fpBytes, nil
 }
 
-func (self *Recognizer) RecognizeByFileBuffer(data []byte, startSeconds int, lenSeconds int) (string, error) {
+func (self *Recognizer) RecognizeByFileBuffer(data []byte, startSeconds int, lenSeconds int, userParams map[string]string) (string, error) {
     qurl := "http://" + self.Host + "/v1/identify"
     http_method := "POST"
     http_uri := "/v1/identify"
@@ -142,6 +143,12 @@ func (self *Recognizer) RecognizeByFileBuffer(data []byte, startSeconds int, len
         "signature": sign,
         "data_type": data_type,
         "signature_version": signature_version,
+    }
+
+    if userParams != nil {
+        for key, val := range userParams {
+            field_params[key] = val
+        }
     }
 
     file_params := map[string][]byte {
