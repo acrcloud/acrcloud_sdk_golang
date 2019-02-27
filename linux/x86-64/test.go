@@ -35,6 +35,10 @@ func main() {
 
     //result, err := recHandler.RecognizeByFileBuffer(b, 0, 20, nil)
     result, err := recHandler.RecognizeByFileBuffer(b, 0, 30, userParams)
+
+    // WAVE audio, Microsoft PCM, 16 bit, mono 8000 Hz
+    //result, err := recHandler.Recognize(b, userParams)
+
     end := time.Now().UnixNano() / 1e6
     fmt.Println(end - start)
     fmt.Println(time.Now())

@@ -8,6 +8,7 @@ extern "C" {
 int create_fingerprint(char *pcm_buffer, int pcm_buffer_len, char is_db_fingerprint, char **fps_buffer);
 int create_fingerprint_by_file(char *file_path, int start_time_seconds, int audio_len_seconds, char is_db_fingerprint, char **fps_buffer);
 int create_fingerprint_by_filebuffer(char *file_buffer, int file_buffer_len, int start_time_seconds, int audio_len_seconds, char is_db_fingerprint, char **fps_buffer);
+int create_humming_fingerprint(char *pcm_buffer, int pcm_buffer_len, char **fps_buffer);
 int create_humming_fingerprint_by_file(char *file_path, int start_time_seconds, int audio_len_seconds, char **fps_buffer);
 int create_humming_fingerprint_by_filebuffer(char *file_buffer, int file_buffer_len, int start_time_seconds, int audio_len_seconds, char **fps_buffer);
 int decode_audio_by_file(char *file_path, int start_time_seconds, int audio_len_seconds, char **audio_buffer);
