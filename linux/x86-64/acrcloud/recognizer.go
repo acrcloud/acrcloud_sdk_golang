@@ -216,11 +216,19 @@ func (self *Recognizer) DoRecognize(audioFp []byte, humFp []byte, userParams map
     return result,err
 }
 
-// @param data: file_path query buffer
-// @param startSeconds: skip (start_seconds) seconds from from the beginning of (filePath)
-// @param lenSeconds: use rec_length seconds data to recongize
-// @param userParams: some User-defined fields.
-// @return result metainfos
+
+/*
+ *    This function support most of audio / video files.
+ *    
+ *    Audio: mp3, wav, m4a, flac, aac, amr, ape, ogg ...
+ *    Video: mp4, mkv, wmv, flv, ts, avi ...
+ *
+ *    @param data: file_path query buffer
+ *    @param startSeconds: skip (start_seconds) seconds from from the beginning of (data)
+ *    @param lenSeconds: use rec_length seconds data to recongize
+ *    @param userParams: some User-defined fields.
+ *    @return result metainfos
+*/
 func (self *Recognizer) RecognizeByFileBuffer(data []byte, startSeconds int, lenSeconds int, userParams map[string]string) (string, error) {
     var humFp []byte
     var audioFp []byte
