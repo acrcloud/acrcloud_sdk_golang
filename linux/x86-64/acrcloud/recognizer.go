@@ -216,6 +216,11 @@ func (self *Recognizer) DoRecognize(audioFp []byte, humFp []byte, userParams map
     return result,err
 }
 
+// @param data: file_path query buffer
+// @param startSeconds: skip (start_seconds) seconds from from the beginning of (filePath)
+// @param lenSeconds: use rec_length seconds data to recongize
+// @param userParams: some User-defined fields.
+// @return result metainfos
 func (self *Recognizer) RecognizeByFileBuffer(data []byte, startSeconds int, lenSeconds int, userParams map[string]string) (string, error) {
     var humFp []byte
     var audioFp []byte
@@ -230,6 +235,7 @@ func (self *Recognizer) RecognizeByFileBuffer(data []byte, startSeconds int, len
     return result,err
 }
 
+// Only support Microsoft PCM, 16 bit, mono 8000 Hz
 func (self *Recognizer) Recognize(data []byte, userParams map[string]string) (string, error) {
     var humFp []byte
     var audioFp []byte
