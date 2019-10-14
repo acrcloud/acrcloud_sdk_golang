@@ -65,7 +65,6 @@ func (self *Recognizer) Post(url string, fieldParams map[string]string, filePara
         fw.Write(val)
     }
 
-
     mpWriter.Close()
 
     hClient := &http.Client {
@@ -101,23 +100,23 @@ func (self *Recognizer) GetSign(str string, key string) string {
     return base64.StdEncoding.EncodeToString(hmacHandler.Sum(nil))
 }
 
-//func (self *Recognizer) CreateHummingFingerprint(pcmData []byte) ([]byte, error) {
-//    if (pcmData == nil || len(pcmData) == 0) {
-//        return nil, fmt.Errorf("Parameter pcmData is nil or len(pcmData) == 0")
-//    }
-//
-//    var fp *C.char
-//    fpLenC := C.create_humming_fingerprint((*C.char)(unsafe.Pointer(&pcmData[0])), C.int(len(pcmData)), &fp)
-//    fpLen := int(fpLenC)
-//    if fpLen <= 0 {
-//        return nil, fmt.Errorf("Can not Create Humming Fingerprint")
-//    }
-//
-//    fpBytes := C.GoBytes(unsafe.Pointer(fp), C.int(fpLen))
-//    C.acr_free(fp)
-//
-//    return fpBytes, nil
-//}
+func (self *Recognizer) CreateHummingFingerprint(pcmData []byte) ([]byte, error) {
+   if (pcmData == nil || len(pcmData) == 0) {
+       return nil, fmt.Errorf("Parameter pcmData is nil or len(pcmData) == 0")
+   }
+
+   var fp *C.char
+   fpLenC := C.create_humming_fingerprint((*C.char)(unsafe.Pointer(&pcmData[0])), C.int(len(pcmData)), &fp)
+   fpLen := int(fpLenC)
+   if fpLen <= 0 {
+       return nil, fmt.Errorf("Can not Create Humming Fingerprint")
+   }
+
+   fpBytes := C.GoBytes(unsafe.Pointer(fp), C.int(fpLen))
+   C.acr_free(fp)
+
+   return fpBytes, nil
+}
 
 func (self *Recognizer) CreateAudioFingerprint(pcmData []byte) ([]byte, error) {
     if (pcmData == nil || len(pcmData) == 0) {
@@ -137,13 +136,13 @@ func (self *Recognizer) CreateAudioFingerprint(pcmData []byte) ([]byte, error) {
     return fpBytes, nil
 }
 
-func (self *Recognizer) CreateHummingFingerprintByBuffer(pcmData []byte, startSeconds int, lenSeconds int) ([]byte, error) {
-    if (pcmData == nil || len(pcmData) == 0) {
-        return nil, fmt.Errorf("Parameter pcmData is nil or len(pcmData) == 0")
+func (self *Recognizer) CreateHummingFingerprintByBuffer(fileBufferData []byte, startSeconds int, lenSeconds int) ([]byte, error) {
+    if (fileBufferData == nil || len(fileBufferData) == 0) {
+        return nil, fmt.Errorf("Parameter fileBufferData is nil or len(fileBufferData) == 0")
     }
 
     var fp *C.char
-    fpLenC := C.create_humming_fingerprint_by_filebuffer((*C.char)(unsafe.Pointer(&pcmData[0])), C.int(len(pcmData)), C.int(startSeconds), C.int(lenSeconds), &fp)
+    fpLenC := C.create_humming_fingerprint_by_filebuffer((*C.char)(unsafe.Pointer(&fileBufferData[0])), C.int(len(fileBufferData)), C.int(startSeconds), C.int(lenSeconds), &fp)
     fpLen := int(fpLenC)
     if fpLen <= 0 {
         return nil, fmt.Errorf("Can not Create Humming Fingerprint")
@@ -155,13 +154,13 @@ func (self *Recognizer) CreateHummingFingerprintByBuffer(pcmData []byte, startSe
     return fpBytes, nil
 }
 
-func (self *Recognizer) CreateAudioFingerprintByBuffer(pcmData []byte, startSeconds int, lenSeconds int) ([]byte, error) {
-    if (pcmData == nil || len(pcmData) == 0) {
-        return nil, fmt.Errorf("Parameter pcmData is nil or len(pcmData) == 0")
+func (self *Recognizer) CreateAudioFingerprintByBuffer(fileBufferData []byte, startSeconds int, lenSeconds int) ([]byte, error) {
+    if (fileBufferData == nil || len(fileBufferData) == 0) {
+        return nil, fmt.Errorf("Parameter fileBufferData is nil or len(fileBufferData) == 0")
     }
 
     var fp *C.char
-    fpLenC := C.create_fingerprint_by_filebuffer((*C.char)(unsafe.Pointer(&pcmData[0])), C.int(len(pcmData)), C.int(startSeconds), C.int(lenSeconds), 0, &fp)
+    fpLenC := C.create_fingerprint_by_filebuffer((*C.char)(unsafe.Pointer(&fileBufferData[0])), C.int(len(fileBufferData)), C.int(startSeconds), C.int(lenSeconds), 0, &fp)
     fpLen := int(fpLenC)
     if fpLen <= 0 {
         return nil, fmt.Errorf("Can not Create Audio Fingerprint")
@@ -171,6 +170,52 @@ func (self *Recognizer) CreateAudioFingerprintByBuffer(pcmData []byte, startSeco
     C.acr_free(fp)
 
     return fpBytes, nil
+}
+
+func (self *Recognizer) CreateHummingFingerprintByFile(filePath string, startSeconds int, lenSeconds int) ([]byte, error) {
+    if (len(filePath) == 0) {
+        return nil, fmt.Errorf("Parameter len(filePath) == 0")
+    }
+
+    var fp *C.char
+    fpLenC := C.create_humming_fingerprint_by_file(C.CString(filePath), C.int(startSeconds), C.int(lenSeconds), &fp)
+    fpLen := int(fpLenC)
+    if fpLen <= 0 {
+        return nil, fmt.Errorf("Can not Create Humming Fingerprint")
+    }
+
+    fpBytes := C.GoBytes(unsafe.Pointer(fp), C.int(fpLen))
+    C.acr_free(fp)
+
+    return fpBytes, nil
+}
+
+func (self *Recognizer) CreateAudioFingerprintByFile(filePath string, startSeconds int, lenSeconds int) ([]byte, error) {
+    if (len(filePath) == 0) {
+        return nil, fmt.Errorf("Parameter len(filePath) == 0")
+    }
+
+    var fp *C.char
+    fpLenC := C.create_fingerprint_by_file(C.CString(filePath), C.int(startSeconds), C.int(lenSeconds), 0, &fp)
+    fpLen := int(fpLenC)
+    if fpLen <= 0 {
+        return nil, fmt.Errorf("Can not Create Audio Fingerprint")
+    }
+
+    fpBytes := C.GoBytes(unsafe.Pointer(fp), C.int(fpLen))
+    C.acr_free(fp)
+
+    return fpBytes, nil
+}
+
+func (self *Recognizer) GetDurationMsByFile(filePath string) (int, error) {
+    if (len(filePath) == 0) {
+        return 0, fmt.Errorf("Parameter pcmData is nil or len(pcmData) == 0")
+    }
+
+    duration := C.get_duration_ms_by_file(C.CString(filePath));
+
+    return int(duration), nil;
 }
 
 func (self *Recognizer) DoRecognize(audioFp []byte, humFp []byte, userParams map[string]string) (string, error) {
@@ -243,17 +288,43 @@ func (self *Recognizer) RecognizeByFileBuffer(data []byte, startSeconds int, len
     return result,err
 }
 
+/*
+ *    This function support most of audio / video files.
+ *    
+ *    Audio: mp3, wav, m4a, flac, aac, amr, ape, ogg ...
+ *    Video: mp4, mkv, wmv, flv, ts, avi ...
+ *
+ *    @param data: file_path
+ *    @param startSeconds: skip (start_seconds) seconds from from the beginning of (data)
+ *    @param lenSeconds: use rec_length seconds data to recongize
+ *    @param userParams: some User-defined fields.
+ *    @return result metainfos
+*/
+func (self *Recognizer) RecognizeByFile(filePath string, startSeconds int, lenSeconds int, userParams map[string]string) (string, error) {
+    var humFp []byte
+    var audioFp []byte
+    if self.RecType == ACR_OPT_REC_HUMMING || self.RecType == ACR_OPT_REC_BOTH {
+        humFp,_ = self.CreateHummingFingerprintByFile(filePath, startSeconds, lenSeconds)
+    }
+    if self.RecType == ACR_OPT_REC_AUDIO || self.RecType == ACR_OPT_REC_BOTH {
+        audioFp,_ = self.CreateAudioFingerprintByFile(filePath, startSeconds, lenSeconds)
+    }
+
+    result,err := self.DoRecognize(audioFp, humFp, userParams)
+    return result,err
+}
+
 // Only support Microsoft PCM, 16 bit, mono 8000 Hz
-//func (self *Recognizer) Recognize(data []byte, userParams map[string]string) (string, error) {
-//    var humFp []byte
-//    var audioFp []byte
-//    if self.RecType == ACR_OPT_REC_HUMMING || self.RecType == ACR_OPT_REC_BOTH {
-//        humFp,_ = self.CreateHummingFingerprint(data)
-//    }
-//    if self.RecType == ACR_OPT_REC_AUDIO || self.RecType == ACR_OPT_REC_BOTH {
-//        audioFp,_ = self.CreateAudioFingerprint(data)
-//    }
-//
-//    result,err := self.DoRecognize(audioFp, humFp, userParams)
-//    return result,err
-//}
+func (self *Recognizer) Recognize(data []byte, userParams map[string]string) (string, error) {
+   var humFp []byte
+   var audioFp []byte
+   if self.RecType == ACR_OPT_REC_HUMMING || self.RecType == ACR_OPT_REC_BOTH {
+       humFp,_ = self.CreateHummingFingerprint(data)
+   }
+   if self.RecType == ACR_OPT_REC_AUDIO || self.RecType == ACR_OPT_REC_BOTH {
+       audioFp,_ = self.CreateAudioFingerprint(data)
+   }
+
+   result,err := self.DoRecognize(audioFp, humFp, userParams)
+   return result,err
+}
