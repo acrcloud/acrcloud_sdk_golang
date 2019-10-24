@@ -20,7 +20,7 @@ func main() {
         "access_key": access_key,
         "access_secret": access_secret,
         "host": host,
-        "recognize_type": acrcloud.ACR_OPT_REC_HUMMING,
+        "recognize_type": acrcloud.ACR_OPT_REC_AUDIO,
     }
 
     start := time.Now().UnixNano() / 1e6
@@ -33,12 +33,11 @@ func main() {
         "lyrics": "lyrics",
     }
 
-    //result, err := recHandler.RecognizeByFileBuffer(b, 0, 20, nil)
-    result, err := recHandler.RecognizeByFileBuffer(b, 0, 30, userParams)
+    //result := recHandler.RecognizeByFileBuffer(b, 0, 20, nil)
+    result := recHandler.RecognizeByFileBuffer(b, 0, 12, userParams)
     end := time.Now().UnixNano() / 1e6
     fmt.Println(end - start)
     fmt.Println(time.Now())
-    fmt.Println(err)
 
     fmt.Println(result)
 }
