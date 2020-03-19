@@ -33,6 +33,7 @@ type Recognizer struct {
     AccessSecret string
     RecType string
     TimeoutS int
+    HttpClient_ *http.Client
 }
 
 func NewRecognizer(configs map[string]string) *Recognizer {
@@ -42,6 +43,10 @@ func NewRecognizer(configs map[string]string) *Recognizer {
     result.AccessSecret = configs["access_secret"]
     result.RecType = configs["recognize_type"]
     result.TimeoutS = 10
+
+    result.HttpClient_ = &http.Client {
+        Timeout: time.Duration(result.TimeoutS * int(time.Second)),
+    }
 
     C.acr_init()
     return result
@@ -67,16 +72,17 @@ func (self *Recognizer) Post(url string, fieldParams map[string]string, filePara
 
     mpWriter.Close()
 
-    hClient := &http.Client {
-        Timeout: time.Duration(10 * time.Second),
-    }
+    //hClient := &http.Client {
+    //    Timeout: time.Duration(10 * time.Second),
+    //}
 
     req, err := http.NewRequest("POST", url, &postDataBuffer)
     if err != nil {
         return "", fmt.Errorf("NewRequest Error: %v", err)
     }
     req.Header.Set("Content-Type", mpWriter.FormDataContentType())
-    response, err := hClient.Do(req)
+    //response, err := hClient.Do(req)
+    response, err := self.HttpClient_.Do(req)
     if err != nil {
         return "", fmt.Errorf("Http Client Do Error: %v", err)
     }
