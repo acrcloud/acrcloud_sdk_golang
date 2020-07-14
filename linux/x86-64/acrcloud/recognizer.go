@@ -225,7 +225,7 @@ func (self *Recognizer) GetDurationMsByFile(filePath string) (int, error) {
 }
 
 func (self *Recognizer) DoRecognize(audioFp []byte, humFp []byte, userParams map[string]string) (string, error) {
-    qurl := "http://" + self.Host + "/v1/identify"
+    qurl := "https://" + self.Host + "/v1/identify"
     http_method := "POST"
     http_uri := "/v1/identify"
     data_type := "fingerprint"
